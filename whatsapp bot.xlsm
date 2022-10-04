@@ -1,0 +1,49 @@
+Declare PtrSafe Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+' Api que ayuda a abrir una aplicación externa a excel (WhatsApp)
+
+Const SW_NORMAL = 1
+
+Sub envioCartera()
+
+Dim Rango As Range
+Dim X
+Dim Mensaje As String
+
+Application.ScreenUpdating = False
+
+For Each Rango In Sheet1.Range("Contactos[NOMBRE]")
+
+'Link de mensaje y mensaje que se envia
+Mensaje = VBA.Replace("whatsapp://send?phone=+56" & Rango.Offset(0, 2).Value & "&text=" & "Hola " & Rango.Value & " Como va todoo ? Sencillo, te cuentoo que esta semana me estara llegando reineta fresca el vierness, como siempre es una reineta premium sellada al vacio ! Ademas acompanamos la oferta con los clasicos camarones ecuatorianos que a todos les encanta ! Me avisas si necesitas cualquier cosa ! Un abrazoo.", " ", "%20")
+
+X = ShellExecute(hwnd, "Open", Mensaje, &O0, &O0, SW_NORMAL)
+
+Application.Wait Now + TimeValue("00:00:04")
+
+'Imagen
+Sheet2.Select 'Colocar que Sheet se ubica la imagen
+ActiveSheet.Shapes.Range(Array("Picture 1")).Select 'Nombre del archivo de la imagen en excel
+Selection.Copy
+Call SendKeys("^v", True)
+Application.Wait Now + TimeValue("00:00:04")
+
+Call SendKeys("~", True)
+
+Call SendKeys("~", True)
+
+Application.Wait Now + TimeValue("00:00:04")
+
+Call SendKeys("~", True)
+
+Application.CutCopyMode = False
+
+Windows(ThisWorkbook.Name).Activate
+Application.Wait Now + TimeValue("00:00:04")
+
+Next Rango
+
+Sheet1.Select
+
+Application.ScreenUpdating = False
+
+End Sub
