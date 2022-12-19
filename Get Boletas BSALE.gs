@@ -1,7 +1,7 @@
 function apiGetBasic(query){
   // API BSALE
-  var apiurl = 'URL API';
-  var token = 'ACCESS-TOKEN'
+  var apiurl = 'https://api.bsale.cl/v1/documents.json?documenttypeid=10&expand&limit=50&offset=778';
+  var token = '96e6b15f45e9eb8b8755d67c3d22d490d214d5bb'
   var headers = {'Content-Type':'application/json',
   'access_token': token
   };
@@ -16,7 +16,9 @@ function apiGetBasic(query){
     var responseData = response.getContentText();
     var json = JSON.parse(responseData);
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const hojaDatos = ss.getSheetByName('SHEET_DATA')
+    const hojaDatos = ss.getSheetByName("REPARTOS")
+    const hojaClientes = ss.getSheetByName("CLIENTES BSALE");
+    const rango = hojaClientes.getRange("A2:E900")
     json.items.forEach(item => {
       const n_boleta = item.number; 
       const total = item.totalAmount;
@@ -25,17 +27,21 @@ function apiGetBasic(query){
       const fecha = item.emissionDate;
       const direccion = item.address;
       const comuna = item.municipality;
+      const formula1 = "=BUSCARV(B6;'CLIENTES BSALE'!$A$2:$D$1000;2;0)"; 
+      const formula2 = "=ARRAYFORMULA(BUSCARV(B6;'CLIENTES BSALE'!$A$2:$E$1000;3;0))";
+      const formula3 = "=ARRAYFORMULA(BUSCARV(B6;'CLIENTES BSALE'!$A$2:$E$1000;5;0))";
 
       // TIMESTAMP UNIX TO DATE
       var date = new Date(fecha*1000);
-      var formattedDate = Utilities.formatDate(date, "GMT+0:00", "dd-MM-yyyy");
+      var formattedDate = Utilities.formatDate(date, "GMT+0:00", "dd-MM");
 
       // agregar datos en la tabla
-      hojaDatos.appendRow([formattedDate,' ',direccion,comuna,' ',n_boleta,total,pdf,cliente]);
+      hojaDatos.appendRow([formattedDate,cliente, formula1, formula2, direccion, comuna, formula3, n_boleta, "$"+total]);
+      
     })
 
     // ELIMINA DUPLICADOS
-    let sheet = SpreadsheetApp.openById('ID_SHEET').getSheetByName('SHEET_DATA');
+    let sheet = SpreadsheetApp.openById('1kbEywmw5EKJt91abU4QHB8XzbEPKupFtHSaY8ViH0ac').getSheetByName("REPARTOS");
     let data = sheet.getDataRange().getValues();
     let newData = [];
     for (let i in data) {
