@@ -1,7 +1,7 @@
 function apiGetBasic(query){
   // API BSALE
   var apiurl = 'https://api.bsale.cl/v1/documents.json?documenttypeid=10&expand&limit=50&offset=778';
-  var token = '96e6b15f45e9eb8b8755d67c3d22d490d214d5bb'
+  var token = 'API-KEY'
   var headers = {'Content-Type':'application/json',
   'access_token': token
   };
