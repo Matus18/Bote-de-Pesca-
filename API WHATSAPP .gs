@@ -1,16 +1,16 @@
-
-function enviar() {
-    var excel = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet_configuracion = excel.getSheetByName("Configuracion");
-    var plantilla = sheet_configuracion.getRange(1, 2).getValue();
-    var token = sheet_configuracion.getRange(2, 2).getValue();
-    var api = sheet_configuracion.getRange(3, 2).getValue();
-    if (excel.getSheetByName("Mensaje")) {
-        var sheet = excel.getSheetByName("Mensaje");
+ function whatsapps(){
+  var excel = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet_configuracion = excel.getSheetByName("confi");
+  var plantilla = sheet_configuracion.getRange(1, 2).getValue();
+  var token = sheet_configuracion.getRange(2, 2).getValue();
+  var api = sheet_configuracion.getRange(3, 2).getValue();
+  if (excel.getSheetByName("CUENTAS X COBRAR")) {
+        var sheet = excel.getSheetByName("CUENTAS X COBRAR");
         var rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn()).getValues();
         for (var i = 0, l = rows.length; i < l; i++) {
-            var numero = rows[i][0];
-            var nombre = rows[i][1];
+            var numero = rows[i][5];
+            var nombres = rows[i][0];
+            var monto = rows[i][3];
             var payload = {
                 "messaging_product": "whatsapp",
                 "to": numero,
@@ -18,14 +18,18 @@ function enviar() {
                 "template": {
                     "name": plantilla,
                     "language": {
-                        "code": "ese"
+                        "code": "es"
                     },
                     "components": [{
                         "type": "body",
                         "parameters": [
                             {
                                 "type": "text",
-                                "text": nombre
+                                "text": nombres
+                            },
+                            {
+                              "type":"text",
+                              "text": monto
                             }
                         ]
                     }]
@@ -44,4 +48,4 @@ function enviar() {
             }
         }
     }
-}
+  }
