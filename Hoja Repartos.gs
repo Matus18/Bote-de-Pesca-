@@ -15,6 +15,10 @@ function cuentas_x_cobrar(){
   const hojaOri = libro.getActiveSheet();
   const hojaDesti = libro.getSheetByName("CUENTAS X COBRAR");
   const filaActiva = hojaOri.getActiveCell().getRow();
+  var sheet_configuracion = libro.getSheetByName("confi");
+  var plantilla = sheet_configuracion.getRange(1, 2).getValue();
+  var token = sheet_configuracion.getRange(2, 2).getValue();
+  var api = sheet_configuracion.getRange(3, 2).getValue();
   if (hojaOri.getRange(filaActiva,13).getValue() == "Despachado"){
   const rangoOri = hojaOri.getRange(filaActiva,1,1,hojaOri.getLastColumn()).getValues();
   const nombre = hojaOri.getRange(filaActiva,3).getValue();
@@ -23,7 +27,43 @@ function cuentas_x_cobrar(){
   const monto_total = hojaOri.getRange(filaActiva,9).getValue();
   const fecha_boleta = hojaOri.getRange(filaActiva,1).getValue();
   const numero_telefono = hojaOri.getRange(filaActiva,7).getValue();
-  hojaDesti.appendRow([nombre,apellido2,n_bole,monto_total,fecha_boleta,numero_telefono])
+  hojaDesti.appendRow([nombre,apellido2,n_bole,monto_total,fecha_boleta])
+  var payload = {
+                "messaging_product": "whatsapp",
+                "to": numero_telefono,
+                "type": "template",
+                "template": {
+                    "name": plantilla,
+                    "language": {
+                        "code": "es"
+                    },
+                    "components": [{
+                        "type": "body",
+                        "parameters": [
+                            {
+                                "type": "text",
+                                "text": nombre
+                            },
+                            {
+                              "type":"text",
+                              "text": monto_total
+                            }
+                        ]
+                    }]
+                }
+            }
+            var options =
+            {
+              'headers': { "Content-Type": "application/json","Authorization": token},
+                'method': "POST",
+                'payload': JSON.stringify(payload)
+            };
+            try {
+                var response = UrlFetchApp.fetch(api, options);
+                var json = JSON.parse(response.getContentText());
+            } catch (e) {
+            }
+        }
   var ss = SpreadsheetApp.getActive().getSheetByName("REPARTOS");
   var uf = ss.getLastRow();
   var data = ss.getRange(2,1, uf, 13).getDisplayValues();
@@ -33,7 +73,7 @@ function cuentas_x_cobrar(){
     }
   }
 }
-}
+
 
 // DESPACHADO CON PAGO DE TARJETA
 function cuentas_pagadas(){
@@ -41,7 +81,11 @@ function cuentas_pagadas(){
   const hojaOri = libro.getActiveSheet();
   const hojaDesti = libro.getSheetByName("CUENTAS PAGADAS");
   const filaActiva = hojaOri.getActiveCell().getRow();
-  if (hojaOri.getRange(filaActiva,12).getValue() == "Pagado", hojaOri.getRange(filaActiva,13).getValue() == "Despachado"){
+  var sheet_configuracion = libro.getSheetByName("confi");
+  var plantilla = sheet_configuracion.getRange(4, 2).getValue();
+  var token = sheet_configuracion.getRange(2, 2).getValue();
+  var api = sheet_configuracion.getRange(3, 2).getValue();
+  if (hojaOri.getRange(filaActiva,12).getValue() == "Pagado"){
   const rangoOri = hojaOri.getRange(filaActiva,1,1,hojaOri.getLastColumn()).getValues();
   const nombre = hojaOri.getRange(filaActiva,3).getValue();
   const apellido1 = hojaOri.getRange(filaActiva,4).getValue();
@@ -49,13 +93,44 @@ function cuentas_pagadas(){
   const monto_total = hojaOri.getRange(filaActiva,9).getValue();
   const fecha_boleta = hojaOri.getRange(filaActiva,1).getValue();
   hojaDesti.appendRow([nombre,apellido1,n_bole,monto_total,fecha_boleta])
+  var payload = {
+                "messaging_product": "whatsapp",
+                "to": numero_telefono,
+                "type": "template",
+                "template": {
+                    "name": plantilla,
+                    "language": {
+                        "code": "es"
+                    },
+                    "components": [{
+                        "type": "body",
+                        "parameters": [
+                            {
+                                "type": "text",
+                                "text": nombre
+                            }
+                        ]
+                    }]
+                }
+            }
+            var options =
+            {
+              'headers': { "Content-Type": "application/json","Authorization": token},
+                'method': "POST",
+                'payload': JSON.stringify(payload)
+            };
+            try {
+                var response = UrlFetchApp.fetch(api, options);
+                var json = JSON.parse(response.getContentText());
+            } catch (e) {
+            }
+        }
   var ss = SpreadsheetApp.getActive().getSheetByName("REPARTOS");
   var uf = ss.getLastRow();
-  var data = ss.getRange(2,1, uf, 13).getDisplayValues();
+  var data = ss.getRange(2,1, uf, 12).getDisplayValues();
   for(var i = data.length-1;i>=0;i--){
-    if (data[i][12] == "Despachado"){
+    if (data[i][11] == "Pagado"){
       ss.deleteRow(i+2);
     }
   }
   }
-}
