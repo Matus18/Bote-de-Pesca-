@@ -23,10 +23,3 @@ function pagado_cuentas(){
   }
 }
 }
-
-//BORRAR NUMERO
-function clearColumnB() {
-  var sheet = SpreadsheetApp.getActiveSheet();
-  var range = sheet.getRange("F3:F");
-  range.clear();
-}
