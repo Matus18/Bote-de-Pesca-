@@ -78,27 +78,28 @@ function cuentas_x_cobrar(){
 // DESPACHADO CON PAGO DE TARJETA
 function cuentas_pagadas(){
   const libro = SpreadsheetApp.getActiveSpreadsheet();
-  const hojaOri = libro.getActiveSheet();
-  const hojaDesti = libro.getSheetByName("CUENTAS PAGADAS");
-  const filaActiva = hojaOri.getActiveCell().getRow();
+  const hojaOri1 = libro.getActiveSheet();
+  const hojaDesti1 = libro.getSheetByName("CUENTAS PAGADAS");
+  const filaActiva = hojaOri1.getActiveCell().getRow();
   var sheet_configuracion = libro.getSheetByName("confi");
-  var plantilla = sheet_configuracion.getRange(4, 2).getValue();
+  var plantilla1 = sheet_configuracion.getRange(4, 2).getValue();
   var token = sheet_configuracion.getRange(2, 2).getValue();
   var api = sheet_configuracion.getRange(3, 2).getValue();
-  if (hojaOri.getRange(filaActiva,12).getValue() == "Pagado"){
-  const rangoOri = hojaOri.getRange(filaActiva,1,1,hojaOri.getLastColumn()).getValues();
-  const nombre = hojaOri.getRange(filaActiva,3).getValue();
-  const apellido1 = hojaOri.getRange(filaActiva,4).getValue();
-  const n_bole = hojaOri.getRange(filaActiva,8).getValue();
-  const monto_total = hojaOri.getRange(filaActiva,9).getValue();
-  const fecha_boleta = hojaOri.getRange(filaActiva,1).getValue();
-  hojaDesti.appendRow([nombre,apellido1,n_bole,monto_total,fecha_boleta])
+  if (hojaOri1.getRange(filaActiva,12).getValue() == "Pagado"){
+  const rangoOri = hojaOri1.getRange(filaActiva,1,1,hojaOri1.getLastColumn()).getValues();
+  const nombre_1 = hojaOri1.getRange(filaActiva,3).getValue();
+  const apellido1 = hojaOri1.getRange(filaActiva,4).getValue();
+  const n_bole = hojaOri1.getRange(filaActiva,8).getValue();
+  const monto_total = hojaOri1.getRange(filaActiva,9).getValue();
+  const fecha_boleta = hojaOri1.getRange(filaActiva,1).getValue();
+  const numero_telefono1 = hojaOri1.getRange(filaActiva,7).getValue();
+  hojaDesti1.appendRow([nombre_1,apellido1,n_bole,monto_total,fecha_boleta])
   var payload = {
                 "messaging_product": "whatsapp",
-                "to": numero_telefono,
+                "to": numero_telefono1,
                 "type": "template",
                 "template": {
-                    "name": plantilla,
+                    "name": plantilla1,
                     "language": {
                         "code": "es"
                     },
@@ -107,7 +108,7 @@ function cuentas_pagadas(){
                         "parameters": [
                             {
                                 "type": "text",
-                                "text": nombre
+                                "text": nombre_1
                             }
                         ]
                     }]
