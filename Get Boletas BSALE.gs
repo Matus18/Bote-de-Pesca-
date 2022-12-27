@@ -1,10 +1,10 @@
-function apiGetBoletas(query){
+function apiGetBoletas(query, currentDate){
   // API BSALE
-  var apiurl = 'https://api.bsale.cl/v1/documents.json?documenttypeid=10&expand&limit=50&offset=804';
-  var token = 'API KEY'
-  var headers = {'Content-Type':'application/json',
-  'access_token': token
-  };
+  var currentDate = new Date();
+  var unixTimestamp = currentDate.getTime();
+  var apiurl = `https://api.bsale.cl/v1/documents.json?documenttypeid=10&emissiondate=${unixTimestamp}`;
+  var token = 'API-KEY'
+  var headers = {'Content-Type':'application/json','access_token': token};
   var params = {
     "method":"GET",
     "headers": headers
@@ -41,7 +41,7 @@ function apiGetBoletas(query){
       var date = new Date(fecha*1000);
       var formattedDate = Utilities.formatDate(date, "GMT+0:00", "dd-MM");
       // agregar datos en la tabla
-      hojaDatos.appendRow([formattedDate,cliente, name, apellido_1, direccion, comuna, numero_telefonico, n_boleta, "$"+total]);
+      hojaDatos.appendRow([formattedDate,cliente,"","",n_boleta,direccion, name, apellido_1, comuna, numero_telefonico, "$"+total]);
     })
   
     // ELIMINA DUPLICADOS
